@@ -14,6 +14,8 @@ public class SManagerScr : MonoBehaviour
     public AudioClip reload_1911;
     public AudioClip reload_AK47;
 
+    public AudioClip throwableClip;
+
     // ----
     public AudioSource emptySound1911;
 

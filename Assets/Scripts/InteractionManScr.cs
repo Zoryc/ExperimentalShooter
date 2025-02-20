@@ -8,6 +8,7 @@ public class InteractionManScr : MonoBehaviour
 
     private GameObject hoveringWeapon = null;
     private GameObject hoveringAmmoBox = null;
+    public GameObject hoveringThrowable = null;
 
     private void Awake() // Called when loaded!
     {
@@ -48,7 +49,6 @@ public class InteractionManScr : MonoBehaviour
             // AmmoBox
             if (hitByRayCast.GetComponent<AmmoBoxScr>() != null)
             {
-                //print("Weapon selected/pointed!");
                 hoveringAmmoBox = hitByRayCast;
                 hoveringAmmoBox.GetComponent<Outline>().enabled = true;
 
@@ -63,6 +63,25 @@ public class InteractionManScr : MonoBehaviour
                 if (hoveringAmmoBox != null)
                 {
                     hoveringAmmoBox.GetComponent<Outline>().enabled = false;
+                }
+            }
+
+            // Throwable
+            if (hitByRayCast.GetComponent<ThrowableScr>() != null)
+            {
+                hoveringThrowable = hitByRayCast;
+                hoveringThrowable.GetComponent<Outline>().enabled = true;
+
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    WeaponManScr.Instance.PickupThrowable(hoveringThrowable.GetComponent<ThrowableScr>());
+                }
+            }
+            else
+            {
+                if (hoveringThrowable != null)
+                {
+                    hoveringThrowable.GetComponent<Outline>().enabled = false;
                 }
             }
         }

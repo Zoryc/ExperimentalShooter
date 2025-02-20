@@ -28,6 +28,7 @@ public class HUBManScr : MonoBehaviour
     public TextMeshProUGUI tacticalAmountUI;
 
     public Sprite emptyImageSlot; // Sprite vs Image?
+    public Sprite greySlot;
 
     public GameObject middleDot;
 
@@ -72,15 +73,24 @@ public class HUBManScr : MonoBehaviour
             activeWeaponUI.sprite = emptyImageSlot;
             unActiveWeaponUI.sprite = emptyImageSlot;
         }
+
+        if (WeaponManScr.Instance.lethalCount <= 0) {
+            lethalUI.sprite = greySlot;
+        }
+
+        if (WeaponManScr.Instance.tacticalCount <= 0)
+        {
+            tacticalUI.sprite = greySlot;
+        }
     }
 
     private Sprite GetWeaponSprite(WeaponScr.WeaponModel model)
     {
         switch (model) {
             case WeaponScr.WeaponModel.Pistol1911:
-                return Instantiate(Resources.Load<GameObject>("1911_Sprite").GetComponent<SpriteRenderer>().sprite);
+                return Resources.Load<GameObject>("1911_Sprite").GetComponent<SpriteRenderer>().sprite;
             case WeaponScr.WeaponModel.AK47:
-                return Instantiate(Resources.Load<GameObject>("AK47_Sprite").GetComponent<SpriteRenderer>().sprite);
+                return Resources.Load<GameObject>("AK47_Sprite").GetComponent<SpriteRenderer>().sprite;
             default:
                 return null;
         }
@@ -91,9 +101,9 @@ public class HUBManScr : MonoBehaviour
         switch (model)
         {
             case WeaponScr.WeaponModel.Pistol1911:
-                return Instantiate(Resources.Load<GameObject>("Pistol_Bullet").GetComponent<SpriteRenderer>().sprite);
+                return Resources.Load<GameObject>("Pistol_Bullet").GetComponent<SpriteRenderer>().sprite;
             case WeaponScr.WeaponModel.AK47:
-                return Instantiate(Resources.Load<GameObject>("Rifle_Bullet").GetComponent<SpriteRenderer>().sprite);
+                return Resources.Load<GameObject>("Rifle_Bullet").GetComponent<SpriteRenderer>().sprite;
             default:
                 return null;
         }
@@ -108,5 +118,23 @@ public class HUBManScr : MonoBehaviour
         }
 
         return null; // prob never happen
+    }
+
+    internal void updateThrowableUI()
+    {
+        lethalAmountUI.text = $"{WeaponManScr.Instance.lethalCount}";
+        tacticalAmountUI.text = $"{WeaponManScr.Instance.tacticalCount}";
+
+        switch (WeaponManScr.Instance.equippedLethalType) {
+            case ThrowableScr.ThrowableType.Grenade:
+                lethalUI.sprite = Resources.Load<GameObject>("Grenade").GetComponent<SpriteRenderer>().sprite;
+                break;
+        }
+
+        switch (WeaponManScr.Instance.equippedTacticalType) {
+            case ThrowableScr.ThrowableType.Smoke_Grenade:
+                tacticalUI.sprite = Resources.Load<GameObject>("Smoke_Grenade").GetComponent<SpriteRenderer>().sprite;
+                break;
+        }
     }
 }

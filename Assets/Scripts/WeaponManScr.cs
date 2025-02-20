@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static ThrowableScr;
 
 public class WeaponManScr : MonoBehaviour
 {
@@ -14,6 +15,22 @@ public class WeaponManScr : MonoBehaviour
     [Header("Ammo")]
     public int totalRifleAmmo = 0;
     public int totalPistolAmmo = 0;
+
+    [Header("Throwables")]
+    public GameObject grenadePrefab;
+
+    [Header("Lethal")]
+    public GameObject throwableSpawn;
+    public float throwForce = 10f;
+    public float forceMultiplier = 0;
+    public float forceMulLimit = 2f;
+    public int lethalCount = 0;
+    public ThrowableScr.ThrowableType equippedLethalType;
+
+    [Header("Tacticals")]
+    public int tacticalCount = 0;
+    public ThrowableScr.ThrowableType equippedTacticalType;
+    public GameObject smokeGrenadePrefab;
 
     private void Awake() // Called when loaded!
     {
@@ -30,6 +47,9 @@ public class WeaponManScr : MonoBehaviour
     private void Start()
     {
         activeWeaponSlot = weaponSlots[0]; // start with the first one
+
+        equippedLethalType = ThrowableScr.ThrowableType.None;
+        equippedTacticalType = ThrowableScr.ThrowableType.None;
     }
 
     private void Update()
@@ -42,11 +62,89 @@ public class WeaponManScr : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
             SwitchActiveSlot(0);
-        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
             SwitchActiveSlot(1);
         }
+
+        if (Input.GetKey(KeyCode.G) || Input.GetKey(KeyCode.T)) {
+            forceMultiplier += Time.deltaTime;
+
+            if (forceMultiplier > forceMulLimit) {
+                forceMultiplier = forceMulLimit;
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.G)) {
+            if (lethalCount > 0) {
+                ThrowLethal();
+            }
+            forceMultiplier = 0;
+        }
+
+        if (Input.GetKeyUp(KeyCode.T))
+        {
+            if (tacticalCount > 0)
+            {
+                ThrowTactical();
+            }
+            forceMultiplier = 0;
+        }
+    }
+
+    private void ThrowTactical() // why two same method?
+    {
+        GameObject tacticalPreFab = getThrowablePreFab(equippedTacticalType);
+
+        GameObject throwable = Instantiate(tacticalPreFab, throwableSpawn.transform.position, Camera.main.transform.rotation);
+        Rigidbody rb = throwable.GetComponent<Rigidbody>();
+
+        rb.AddForce(Camera.main.transform.forward * (throwForce * forceMultiplier), ForceMode.Impulse);
+
+        throwable.GetComponent<ThrowableScr>().hasBeenThrown = true;
+        tacticalCount -= 1;
+
+        if (tacticalCount == 0)
+        {
+            equippedTacticalType = ThrowableScr.ThrowableType.None;
+        }
+
+        HUBManScr.Instance.updateThrowableUI();
+    }
+
+    private void ThrowLethal()
+    {
+        GameObject lethalPreFab = getThrowablePreFab(equippedLethalType);
+
+        GameObject throwable = Instantiate(lethalPreFab, throwableSpawn.transform.position, Camera.main.transform.rotation);
+        Rigidbody rb = throwable.GetComponent<Rigidbody>();
+
+        rb.AddForce(Camera.main.transform.forward * (throwForce * forceMultiplier), ForceMode.Impulse);
+
+        throwable.GetComponent<ThrowableScr>().hasBeenThrown = true;
+        lethalCount -= 1;
+
+        if (lethalCount == 0) {
+            equippedLethalType = ThrowableScr.ThrowableType.None;
+        }
+
+        HUBManScr.Instance.updateThrowableUI();
+    }
+
+    private GameObject getThrowablePreFab(ThrowableType type)
+    {
+        switch (type) {
+            case ThrowableScr.ThrowableType.Grenade:
+                return grenadePrefab;
+            case ThrowableType.Smoke_Grenade:
+                return smokeGrenadePrefab;
+        }
+
+        return null;
     }
 
     public void PickupWeapon(GameObject pWeapon) {
@@ -113,7 +211,7 @@ public class WeaponManScr : MonoBehaviour
         }
     }
 
-    internal void DecreaseTotalAmmo(int magazineSize, WeaponScr.WeaponModel weaponModel)
+    public void DecreaseTotalAmmo(int magazineSize, WeaponScr.WeaponModel weaponModel)
     {
         switch (weaponModel) {
             case WeaponScr.WeaponModel.Pistol1911:
@@ -137,4 +235,60 @@ public class WeaponManScr : MonoBehaviour
 
         return 0;
     }
+
+    #region | ---- Throwables ---- |
+    public void PickupThrowable(ThrowableScr throwable)
+    {
+        switch (throwable.throwableType) {
+            case ThrowableScr.ThrowableType.Grenade:
+                pickupThrowableAsLethal(throwable.throwableType);
+                break;
+            case ThrowableScr.ThrowableType.Smoke_Grenade:
+                PickupThrowableAsTactical(throwable.throwableType);
+                break;
+        }
+    }
+
+    private void PickupThrowableAsTactical(ThrowableScr.ThrowableType tactical)
+    {
+        print("Picked up tactical");
+
+        if (equippedTacticalType == tactical || equippedTacticalType == ThrowableScr.ThrowableType.None)
+        {
+            equippedTacticalType = tactical;
+
+            if (tacticalCount < 2) // 2 max
+            {
+                tacticalCount += 1;
+                Destroy(InteractionManScr.Instance.hoveringThrowable.gameObject); // Really?
+                HUBManScr.Instance.updateThrowableUI();
+            }
+            else
+            {
+                print("tactical is max");
+
+            }
+        }
+    }
+
+    private void pickupThrowableAsLethal(ThrowableScr.ThrowableType throwableType)
+    {
+        print("Picked up Throwable");
+
+        if (equippedLethalType == throwableType || equippedLethalType == ThrowableScr.ThrowableType.None) {
+
+            equippedLethalType = throwableType;
+
+            if (lethalCount < 2) // 2 max
+            {
+                lethalCount += 1;
+                Destroy(InteractionManScr.Instance.hoveringThrowable.gameObject); // Really?
+                HUBManScr.Instance.updateThrowableUI();
+            } else {
+                print("Lethal is max");
+            
+            }
+        }
+    }
+    #endregion
 }
