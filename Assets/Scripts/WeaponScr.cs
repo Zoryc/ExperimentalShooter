@@ -7,6 +7,7 @@ using TMPro;
 public class WeaponScr : MonoBehaviour
 {
     public bool isActiveWeapon;
+    public int weaponDamage;
 
     [Header("Shooting")]
     // Shooting
@@ -74,12 +75,6 @@ public class WeaponScr : MonoBehaviour
         bulletsLeft = magazineSize;
 
         spreadIntensity = hipSpreadIntensity;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
     }
 
     // Update is called once per frame
@@ -162,6 +157,10 @@ public class WeaponScr : MonoBehaviour
 
         // Create the bullet
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity); // Quaternion = rotation math
+
+        // Setting the damage of a weapon
+        BulletScr bul = bullet.GetComponent<BulletScr>();
+        bul.bulletDamage = weaponDamage;
 
         bullet.transform.forward = shootingDirection;
         bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletVelocity, ForceMode.Impulse);

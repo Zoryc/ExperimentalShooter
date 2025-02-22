@@ -131,12 +131,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActiveWeapon: 0
+  weaponDamage: 20
   isShooting: 0
   readyToShoot: 0
   shootingDelay: 0.15
   bulletsPerBurst: 1
   burstBulletLeft: 0
   spreadIntensity: 0.4
+  hipSpreadIntensity: 0
+  adsSpreadIntensity: 0
   bulletPrefab: {fileID: 8127209585806097747, guid: 8e78f43d932500548acf9b0a80a1e237, type: 3}
   bulletSpawn: {fileID: 8798015046644859082}
   bulletVelocity: 700

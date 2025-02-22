@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletScr : MonoBehaviour {
+    public int bulletDamage;
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Target"))
@@ -20,6 +22,10 @@ public class BulletScr : MonoBehaviour {
         else if (collision.gameObject.CompareTag("Beer")) {
             print("Hit a beer");
             collision.gameObject.GetComponent<BeerScr>().Shatter(); // Cool!
+        } else if (collision.gameObject.CompareTag("Zombie"))
+        {
+            print("Hit a zombie");
+            collision.gameObject.GetComponent<Zombie>().TakeDamage(bulletDamage);
         }
     }
 
