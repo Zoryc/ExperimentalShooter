@@ -1,22 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class Zombie : MonoBehaviour
 {
     [SerializeField] private int HP = 100; // SerializeField - show private value in inspector
     private Animator animator;
 
+    private NavMeshAgent navAgent;
+
     // Start is called before the first frame update
     void Start()
     {
         animator = this.GetComponent<Animator>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
+        navAgent = this.GetComponent<NavMeshAgent>();
     }
 
     public void TakeDamage(int damageAmount) {
@@ -24,10 +23,22 @@ public class Zombie : MonoBehaviour
 
         if (HP <= 0)
         {
-            animator.SetTrigger("DIE");
+            // a way to die?
             Destroy(this.gameObject);
         } else {
             animator.SetTrigger("DAMAGE");
+        }
+    }
+
+    void Update()
+    {
+        if (navAgent.velocity.magnitude > 0.1f)
+        {
+            animator.SetBool("isWalking", true);
+        }
+        else 
+        {
+            animator.SetBool("isWalking", false);
         }
     }
 }

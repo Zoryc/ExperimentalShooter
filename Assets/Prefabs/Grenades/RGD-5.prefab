@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5008180500928439651}
   - component: {fileID: -2611974119392891078}
   - component: {fileID: 7521116232492467049}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RGD-5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 2402845469076614591}
   - component: {fileID: 7915886814773885324}
   - component: {fileID: 5264508385260227824}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: 01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 6386778591375132800}
   - component: {fileID: 3620454099530657520}
   - component: {fileID: 1973167672446663279}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pin
   m_TagString: Untagged
   m_Icon: {fileID: 0}

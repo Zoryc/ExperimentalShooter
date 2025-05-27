@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5793536411974333247}
   - component: {fileID: 6857288303095483912}
   - component: {fileID: 3658974256695691359}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 1176130236694155088}
   - component: {fileID: 8579951456865600728}
   - component: {fileID: 4278846558216058549}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 5987385821995442538}
   - component: {fileID: 9091122169684436467}
   - component: {fileID: 2700613783164698841}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -415,7 +415,7 @@ GameObject:
   - component: {fileID: 1037297551397227832}
   - component: {fileID: 4526968474306279539}
   - component: {fileID: 823443391427885822}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -549,7 +549,7 @@ GameObject:
   - component: {fileID: 8632979551852315132}
   - component: {fileID: 9163087171061190383}
   - component: {fileID: 7408030710924603434}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -683,7 +683,7 @@ GameObject:
   - component: {fileID: 4066633003108349885}
   - component: {fileID: 3914788477402791270}
   - component: {fileID: 3666115141417433970}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -817,7 +817,7 @@ GameObject:
   - component: {fileID: 8046053862031675836}
   - component: {fileID: 9131040713301545597}
   - component: {fileID: 2621511233106791570}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -951,7 +951,7 @@ GameObject:
   - component: {fileID: 3574902386974226247}
   - component: {fileID: 7244148983960548719}
   - component: {fileID: 9035988961223178673}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1085,7 +1085,7 @@ GameObject:
   - component: {fileID: 1844899067871561738}
   - component: {fileID: 614348160826112543}
   - component: {fileID: 8974499993514556658}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1217,7 +1217,7 @@ GameObject:
   - component: {fileID: 3111009135576152314}
   - component: {fileID: 8932831724962332573}
   - component: {fileID: 7163320761204657144}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bottle
   m_TagString: Beer
   m_Icon: {fileID: 0}
@@ -1306,7 +1306,7 @@ GameObject:
   - component: {fileID: 4867974787218499078}
   - component: {fileID: 2087845980330158844}
   - component: {fileID: 4926222650518191293}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: p2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
