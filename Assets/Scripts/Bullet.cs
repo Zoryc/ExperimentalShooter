@@ -25,7 +25,7 @@ public class Bullet : MonoBehaviour {
         } else if (collision.gameObject.CompareTag("Zombie"))
         {
             print("Hit a zombie");
-            collision.gameObject.GetComponent<Zombie>().TakeDamage(bulletDamage);
+            collision.gameObject.GetComponent<Enemy>().TakeDamage(bulletDamage);
         }
     }
 

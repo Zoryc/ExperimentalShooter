@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2858790315372376572}
   - component: {fileID: 4631401031482409836}
   - component: {fileID: 369281106284733612}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: M1911_Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9085562895650619429}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BulletSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 6750871295551023613}
   - component: {fileID: 2043948046360648158}
   - component: {fileID: 4647332316103622288}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: M1991
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 4785902105141362404}
   - component: {fileID: 3414750014298392605}
   - component: {fileID: 3098434001004206955}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Slide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 3102020377326093045}
   - component: {fileID: 7120529118997973360}
   - component: {fileID: 2398448143031885078}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MuzzleFlashEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5128,7 +5128,7 @@ GameObject:
   - component: {fileID: 2683169788422066391}
   - component: {fileID: 8521504085283834044}
   - component: {fileID: 5934155841599933048}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Magazin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5211,7 +5211,7 @@ GameObject:
   - component: {fileID: 4890746397544332071}
   - component: {fileID: 3405935492276356789}
   - component: {fileID: 5890576823599099642}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Hammer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5294,7 +5294,7 @@ GameObject:
   - component: {fileID: 4339986538431904876}
   - component: {fileID: 4814192873672817612}
   - component: {fileID: 1907691990392316541}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

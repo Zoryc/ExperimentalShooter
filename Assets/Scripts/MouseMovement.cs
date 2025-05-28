@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class MouseMovement : MonoBehaviour
 {
     // A float is just enough here :D Don't need any double
     private float xRotation = 0f;

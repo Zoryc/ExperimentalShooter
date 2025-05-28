@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMov : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     private CharacterController characterController;
 
@@ -28,7 +25,7 @@ public class PlayerMov : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>(); // Already defined in Unity
-        gravity = -9.81f * mass;
+        gravity = Physics.gravity.y * mass;
     }
 
     // Update is called once per frame

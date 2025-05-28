@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 // Continuious - Static object
@@ -9,9 +6,9 @@ using UnityEngine;
 
 public class Throwable : MonoBehaviour
 {
-    [SerializeField] float delay = 3f;
-    [SerializeField] float damageRadius = 20f;
-    [SerializeField] float explosionForce = 1200f;
+    public float delay = 3f;
+    public float damageRadius = 20f;
+    public float explosionForce = 1200f;
 
     float countdown;
     
@@ -88,8 +85,8 @@ public class Throwable : MonoBehaviour
                 rb.AddExplosionForce(explosionForce, transform.position, damageRadius);
             }
 
-            if (coll.GetComponent<Zombie>() != null)
-                coll.GetComponent<Zombie>().TakeDamage(100);
+            if (coll.GetComponent<Enemy>() != null)
+                coll.GetComponent<Enemy>().TakeDamage(100);
         }
 
         // damage done here

@@ -4,14 +4,13 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class Zombie : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     [SerializeField] private int HP = 100; // SerializeField - show private value in inspector
     private Animator animator;
 
     private NavMeshAgent navAgent;
 
-    // Start is called before the first frame update
     void Start()
     {
         animator = this.GetComponent<Animator>();
@@ -30,15 +29,15 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    void Update()
+    private void OnDrawGizmos()
     {
-        if (navAgent.velocity.magnitude > 0.1f)
-        {
-            animator.SetBool("isWalking", true);
-        }
-        else 
-        {
-            animator.SetBool("isWalking", false);
-        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(this.transform.position, 4f);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(this.transform.position, 18f);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(this.transform.position, 21f);
     }
 }
