@@ -123,7 +123,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -257,7 +257,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -391,7 +391,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -525,7 +525,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -659,7 +659,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -793,7 +793,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -927,7 +927,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1061,7 +1061,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1195,7 +1195,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1268,8 +1268,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.33201146, y: 1.2494063, z: 0.3025657}
-  m_Center: {x: 0.011697203, y: 0.5739691, z: 0.010983646}
+  m_Size: {x: 0.33201146, y: 0.8649421, z: 0.3025657}
+  m_Center: {x: 0.011697203, y: 0.381737, z: 0.010983646}
 --- !u!114 &7163320761204657144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1416,7 +1416,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

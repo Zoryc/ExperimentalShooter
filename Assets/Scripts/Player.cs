@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -48,8 +49,22 @@ public class Player : MonoBehaviour
         gameOverUI.gameObject.SetActive(true);
         GetComponent<ScreenFader>().StartFade();
 
+        int waveSurvived = GlobalReferences.Instance.waveNumer;
+        if (waveSurvived - 1 > SessionManager.Instance.LoadHighScore()) 
+        {
+            SessionManager.Instance.SaveHighScore(waveSurvived - 1);
+        }
+
+        StartCoroutine(ReturnToMainMenu());
+
         SoundManager.Instance.shootingChannel.clip = SoundManager.Instance.gameOver;
         SoundManager.Instance.shootingChannel.PlayDelayed(1f);
+    }
+
+    private IEnumerator ReturnToMainMenu()
+    {
+        yield return new WaitForSeconds(4.5f);
+        SceneManager.LoadScene("MainMenu");
     }
 
     private IEnumerator DisplayBloodyScreen()

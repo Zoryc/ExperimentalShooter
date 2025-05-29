@@ -21,14 +21,12 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 lastPosition = new Vector3(0, 0, 0);
 
-    // Start is called before the first frame update
     void Start()
     {
         characterController = GetComponent<CharacterController>(); // Already defined in Unity
         gravityForce = Physics.gravity.y * mass;
     }
 
-    // Update is called once per frame
     void Update()
     {
         // Ground check

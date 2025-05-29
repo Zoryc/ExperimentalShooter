@@ -8,6 +8,8 @@ public class GlobalReferences : MonoBehaviour
     public GameObject smokeGrenadeEffect;
     public GameObject bloodTrayEffect;
 
+    public int waveNumer;
+
     private void Awake() // Called when loaded! Not even started
     {
         if (Instance != null && Instance != this)

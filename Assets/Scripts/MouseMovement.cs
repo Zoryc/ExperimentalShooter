@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MouseMovement : MonoBehaviour
@@ -34,7 +32,11 @@ public class MouseMovement : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, bottom_clamp, top_clamp);
 
         transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
-        //orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+    }
 
+    private void OnDestroy()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }

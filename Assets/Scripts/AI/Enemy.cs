@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
 
     private NavMeshAgent navAgent;
 
-    public bool isDead;
+    public bool isDead = false;
 
     void Start()
     {
