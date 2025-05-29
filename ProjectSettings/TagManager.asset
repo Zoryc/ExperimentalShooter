@@ -15,12 +15,12 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Ground
+  - Environment
   - Water
   - UI
   - Players
   - Collectible
-  - Effects
+  - DevUtils
   - 
   - 
   - 

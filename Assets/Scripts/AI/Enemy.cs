@@ -11,6 +11,8 @@ public class Enemy : MonoBehaviour
 
     private NavMeshAgent navAgent;
 
+    public bool isDead;
+
     void Start()
     {
         animator = this.GetComponent<Animator>();
@@ -24,6 +26,8 @@ public class Enemy : MonoBehaviour
         {
             // a way to die?
             Destroy(this.gameObject);
+            isDead = true;
+
         } else {
             animator.SetTrigger("DAMAGE");
         }

@@ -38,6 +38,11 @@ public class ZombieWalkingState : StateMachineBehaviour
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (SoundManager.Instance.zombieChannel.isPlaying == false) {
+            SoundManager.Instance.zombieChannel.clip = SoundManager.Instance.zombieWalking;
+            SoundManager.Instance.zombieChannel.PlayDelayed(1f);
+        }
+
         // --- Check if the agent is at the waypoint and move it to another one --- //
 
         if (navAgent.remainingDistance <= navAgent.stoppingDistance) {
@@ -60,5 +65,7 @@ public class ZombieWalkingState : StateMachineBehaviour
     {
         // stop the agent
         navAgent.SetDestination(navAgent.transform.position);
+
+        SoundManager.Instance.zombieChannel.Stop();
     }
 }

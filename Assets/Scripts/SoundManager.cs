@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; set; }
 
-    public AudioSource ShootingChannel;
+    public AudioSource shootingChannel;
+    public AudioSource zombieChannel;
 
     public AudioClip shot_1911;
     public AudioClip shot_AK47;
@@ -14,10 +13,15 @@ public class SoundManager : MonoBehaviour
     public AudioClip reload_1911;
     public AudioClip reload_AK47;
 
+    public AudioClip emptyMagazine;
+
     public AudioClip throwableClip;
 
-    // ----
-    public AudioSource emptySound1911;
+    public AudioClip zombieWalking;
+
+    public AudioClip gameOver;
+
+    public AudioClip playerHit;
 
     private void Awake() // Called when loaded!
     {
@@ -31,26 +35,26 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void playShootingSound(WeaponScr.WeaponModel weapon) {
+    public void PlayShootingSound(WeaponScr.WeaponModel weapon) {
         switch (weapon) {
             case WeaponScr.WeaponModel.Pistol1911:
-                ShootingChannel.PlayOneShot(shot_1911);
+                shootingChannel.PlayOneShot(shot_1911);
                 break;
             case WeaponScr.WeaponModel.AK47:
-                ShootingChannel.PlayOneShot(shot_AK47);
+                shootingChannel.PlayOneShot(shot_AK47);
                 break;
         }
     }
 
-    public void playReloadSound(WeaponScr.WeaponModel weapon)
+    public void PlayReloadSound(WeaponScr.WeaponModel weapon)
     {
         switch (weapon)
         {
             case WeaponScr.WeaponModel.Pistol1911:
-                ShootingChannel.PlayOneShot(reload_1911);
+                shootingChannel.PlayOneShot(reload_1911);
                 break;
             case WeaponScr.WeaponModel.AK47:
-                ShootingChannel.PlayOneShot(reload_AK47);
+                shootingChannel.PlayOneShot(reload_AK47);
                 break;
         }
     }

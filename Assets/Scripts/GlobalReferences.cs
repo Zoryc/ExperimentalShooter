@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GlobalRefs : MonoBehaviour
+public class GlobalReferences : MonoBehaviour
 {
-    public static GlobalRefs Instance { get; set; }
+    public static GlobalReferences Instance { get; set; }
     public GameObject bulletImpactEffectPrefab;
     public GameObject grenadeExplosionEffect;
     public GameObject smokeGrenadeEffect;
+    public GameObject bloodTrayEffect;
 
     private void Awake() // Called when loaded! Not even started
     {

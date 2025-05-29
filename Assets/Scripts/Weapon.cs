@@ -96,7 +96,8 @@ public class WeaponScr : MonoBehaviour
 
             if (bulletsLeft == 0 && isShooting)
             {
-                SoundManager.Instance.emptySound1911.Play();
+                SoundManager.Instance.shootingChannel.clip = SoundManager.Instance.emptyMagazine;
+                SoundManager.Instance.shootingChannel.Play();
             }
 
             if (currentShootingMode == ShootingMode.Auto)
@@ -149,7 +150,7 @@ public class WeaponScr : MonoBehaviour
             animator.SetTrigger("RECOIL");
         }
 
-        SoundManager.Instance.playShootingSound(weaponModel);
+        SoundManager.Instance.PlayShootingSound(weaponModel);
 
         readyToShoot = false;
 
@@ -182,7 +183,7 @@ public class WeaponScr : MonoBehaviour
 
     private void Reload()
     {
-        SoundManager.Instance.playReloadSound(weaponModel);
+        SoundManager.Instance.PlayReloadSound(weaponModel);
 
         // Problem with 1911
         animator.SetTrigger("RELOAD");

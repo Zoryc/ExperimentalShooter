@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour {
@@ -9,29 +8,43 @@ public class Bullet : MonoBehaviour {
     {
         if (collision.gameObject.CompareTag("Target"))
         {
-            print("Hit " + collision.gameObject.name + " !");
-            createBulletImpactEffect(collision);
+            Debug.Log("Hit " + collision.gameObject.name + " !");
+            CreateBulletImpactEffect(collision);
             Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Wall"))
         {
-            print("Hit a wall!");
-            createBulletImpactEffect(collision);
+            Debug.Log("Hit a wall!");
+            CreateBulletImpactEffect(collision);
             Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Beer")) {
-            print("Hit a beer");
-            collision.gameObject.GetComponent<Beer>().Shatter(); // Cool!
+            Debug.Log("Hit a beer");
+            collision.gameObject.GetComponent<Beer>().Shatter();
+            Destroy(gameObject);
         } else if (collision.gameObject.CompareTag("Zombie"))
         {
-            print("Hit a zombie");
-            collision.gameObject.GetComponent<Enemy>().TakeDamage(bulletDamage);
+            Debug.Log("Hit a zombie");
+
+            if (collision.gameObject.GetComponent<Enemy>().isDead == false)
+                collision.gameObject.GetComponent<Enemy>().TakeDamage(bulletDamage);
+
+            CreateBloodSprayEffect(collision);
+
+            Destroy(gameObject);
         }
     }
 
-    void createBulletImpactEffect(Collision objectHit) {
-        ContactPoint contact = objectHit.contacts[0]; // OK ?
-        GameObject hole = Instantiate(GlobalRefs.Instance.bulletImpactEffectPrefab, contact.point, Quaternion.LookRotation(contact.normal));
+    private void CreateBloodSprayEffect(Collision objectHit)
+    {
+        ContactPoint contact = objectHit.contacts[0];
+        GameObject bloodSprayPrefab = Instantiate(GlobalReferences.Instance.bloodTrayEffect, contact.point, Quaternion.LookRotation(contact.normal));
+        bloodSprayPrefab.transform.SetParent(objectHit.gameObject.transform);
+    }
+
+    void CreateBulletImpactEffect(Collision objectHit) {
+        ContactPoint contact = objectHit.contacts[0];
+        GameObject hole = Instantiate(GlobalReferences.Instance.bulletImpactEffectPrefab, contact.point, Quaternion.LookRotation(contact.normal));
         hole.transform.SetParent(objectHit.gameObject.transform);
     }
 }

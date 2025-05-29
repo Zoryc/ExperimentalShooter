@@ -33,6 +33,12 @@ public class InteractionManScr : MonoBehaviour
             // Weapon
             if (hitByRayCast.GetComponent<WeaponScr>() != null && hitByRayCast.GetComponent<WeaponScr>().isActiveWeapon == false)
             {
+                // Check if there is a previous item and disable it outline
+                if (hoveringWeapon) 
+                {
+                    hoveringWeapon.GetComponent<Outline>().enabled = false;
+                }
+
                 //print("Weapon selected/pointed!");
                 hoveringWeapon = hitByRayCast;
                 hoveringWeapon.GetComponent<Outline>().enabled = true;
@@ -49,6 +55,12 @@ public class InteractionManScr : MonoBehaviour
             // AmmoBox
             if (hitByRayCast.GetComponent<AmmoBox>() != null)
             {
+                // Check if there is a previous item and disable it outline
+                if (hoveringAmmoBox)
+                {
+                    hoveringAmmoBox.GetComponent<Outline>().enabled = false;
+                }
+
                 hoveringAmmoBox = hitByRayCast;
                 hoveringAmmoBox.GetComponent<Outline>().enabled = true;
 
@@ -69,6 +81,12 @@ public class InteractionManScr : MonoBehaviour
             // Throwable
             if (hitByRayCast.GetComponent<Throwable>() != null)
             {
+                // Check if there is a previous item and disable it outline
+                if (hoveringThrowable)
+                {
+                    hoveringThrowable.GetComponent<Outline>().enabled = false;
+                }
+
                 hoveringThrowable = hitByRayCast;
                 hoveringThrowable.GetComponent<Outline>().enabled = true;
 
