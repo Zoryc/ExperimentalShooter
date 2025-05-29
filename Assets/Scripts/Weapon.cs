@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
+[RequireComponent(typeof(Rigidbody))]
 public class WeaponScr : MonoBehaviour
 {
     public bool isActiveWeapon;
@@ -124,14 +122,14 @@ public class WeaponScr : MonoBehaviour
     }
 
     private void EnterADS() {
-        animator.SetTrigger("enterADS");
+        animator.SetBool("ADS_MODE", true);
         isABS = true;
         HUBManScr.Instance.middleDot.SetActive(false);
         spreadIntensity = adsSpreadIntensity;
     }
 
     private void ExitADS() {
-        animator.SetTrigger("exitADS");
+        animator.SetBool("ADS_MODE", false);
         isABS = false;
         HUBManScr.Instance.middleDot.SetActive(true);
         spreadIntensity = hipSpreadIntensity;

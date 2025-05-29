@@ -3,26 +3,17 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
     public int bulletDamage;
+    public LayerMask impactSurfaceLayer;
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Target"))
+        if (collision.gameObject.CompareTag("Beer"))
         {
-            Debug.Log("Hit " + collision.gameObject.name + " !");
-            CreateBulletImpactEffect(collision);
-            Destroy(gameObject);
-        }
-        else if (collision.gameObject.CompareTag("Wall"))
-        {
-            Debug.Log("Hit a wall!");
-            CreateBulletImpactEffect(collision);
-            Destroy(gameObject);
-        }
-        else if (collision.gameObject.CompareTag("Beer")) {
             Debug.Log("Hit a beer");
             collision.gameObject.GetComponent<Beer>().Shatter();
             Destroy(gameObject);
-        } else if (collision.gameObject.CompareTag("Zombie"))
+        }
+        else if (collision.gameObject.CompareTag("Zombie"))
         {
             Debug.Log("Hit a zombie");
 
@@ -31,6 +22,12 @@ public class Bullet : MonoBehaviour {
 
             CreateBloodSprayEffect(collision);
 
+            Destroy(gameObject);
+        }
+        else if (((1 << collision.gameObject.layer) & impactSurfaceLayer) != 0)
+        {
+            Debug.Log("Hit " + collision.gameObject.name + " !");
+            CreateBulletImpactEffect(collision);
             Destroy(gameObject);
         }
     }

@@ -151,6 +151,9 @@ public class WeaponManScr : MonoBehaviour
 
     private void AddWeaponIntoActiveSlot(GameObject pWeapon)
     {
+        // Disable the rigidbody forces
+        pWeapon.GetComponent<Rigidbody>().isKinematic = true;
+
         DropCurrentWeapon(pWeapon);
 
         pWeapon.transform.SetParent(activeWeaponSlot.transform, false);
@@ -167,7 +170,10 @@ public class WeaponManScr : MonoBehaviour
     private void DropCurrentWeapon(GameObject pWeapon)
     {
         if (activeWeaponSlot.transform.childCount > 0) {
-            var weaponToDrop = activeWeaponSlot.transform.GetChild(0).gameObject;
+            GameObject weaponToDrop = activeWeaponSlot.transform.GetChild(0).gameObject;
+
+            // Enable the rigidbody forces
+            weaponToDrop.GetComponent<Rigidbody>().isKinematic = false;
 
             weaponToDrop.GetComponent<WeaponScr>().isActiveWeapon = false;
             weaponToDrop.GetComponent<WeaponScr>().animator.enabled = false;

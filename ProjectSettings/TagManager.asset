@@ -4,8 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Target
-  - Wall
   - Beer
   - Zombie
   - FxTemporaire
@@ -20,7 +18,7 @@ TagManager:
   - UI
   - Players
   - Collectible
-  - DevUtils
+  - DevLayer
   - Enemy
   - 
   - 

@@ -99,6 +99,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletDamage: 0
+  impactSurfaceLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!54 &-156301275723670014
 Rigidbody:
   m_ObjectHideFlags: 0

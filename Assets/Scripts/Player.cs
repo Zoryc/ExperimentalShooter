@@ -63,7 +63,7 @@ public class Player : MonoBehaviour
 
     private IEnumerator ReturnToMainMenu()
     {
-        yield return new WaitForSeconds(4.5f);
+        yield return new WaitForSeconds(4.0f);
         SceneManager.LoadScene("MainMenu");
     }
 

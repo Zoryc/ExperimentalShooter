@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ZombieSpawner : MonoBehaviour
+public class WaveBaseSpawner : MonoBehaviour
 {
     public int initialZombiePerWave = 5;
     public int currentZombiesPerWave;
@@ -51,10 +51,9 @@ public class ZombieSpawner : MonoBehaviour
             // Generate a random offset within a specified range
             Vector3 spawnOffset = new Vector3(UnityEngine.Random.Range(-1f, 1f), 0, UnityEngine.Random.Range(-1f, 1f));
             Vector3 spawnPosition = this.transform.position + spawnOffset;
-            Debug.Log(spawnPosition);
 
             // Instantiate the zombie
-            var zombie = Instantiate(zombiePrefab, spawnPosition, Quaternion.identity);
+            GameObject zombie = Instantiate<GameObject>(zombiePrefab, spawnPosition, Quaternion.identity);
 
             // Get the enemy script
             Enemy enemyScript = zombie.GetComponent<Enemy>();
