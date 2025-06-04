@@ -39,7 +39,8 @@ public class Bullet : MonoBehaviour {
         bloodSprayPrefab.transform.SetParent(objectHit.gameObject.transform);
     }
 
-    void CreateBulletImpactEffect(Collision objectHit) {
+    void CreateBulletImpactEffect(Collision objectHit) 
+    {
         ContactPoint contact = objectHit.contacts[0];
         GameObject hole = Instantiate(GlobalReferences.Instance.bulletImpactEffectPrefab, contact.point, Quaternion.LookRotation(contact.normal));
         hole.transform.SetParent(objectHit.gameObject.transform);

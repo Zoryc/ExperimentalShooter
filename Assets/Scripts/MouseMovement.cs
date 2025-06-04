@@ -6,21 +6,19 @@ public class MouseMovement : MonoBehaviour
     private float xRotation = 0f;
     private float yRotation = 0f;
 
-    private Transform orientation;
-
     public float top_clamp = 90f;
     public float bottom_clamp = -90f;
 
     public float mouseSens = 500f;
 
-    // Start is called before the first frame update
+    public Transform visionObject;
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * mouseSens;
@@ -31,7 +29,7 @@ public class MouseMovement : MonoBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, bottom_clamp, top_clamp);
 
-        transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
+        visionObject.localRotation = Quaternion.Euler(xRotation, yRotation, 0);
     }
 
     private void OnDestroy()

@@ -1,6 +1,6 @@
-using System;
+
 using System.Collections;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,21 +9,22 @@ public class Player : MonoBehaviour
 {
     public int HP = 100;
     public GameObject bloodyScreen;
-
-    public TextMeshProUGUI healthText;
     public GameObject gameOverUI;
+    public HealthBar bar;
 
     public bool isDead = false;
 
     private void Start()
     {
-        healthText.text = $"Health: {HP}";
+        bar.setMaxValue(HP);
     }
 
     public void TakeDamage(int damageAmount) {
-        HP -= damageAmount;
 
-        if (HP <= 0)
+        int newVal = HP - damageAmount;
+        HP = (newVal <= 0) ? 0 : newVal;
+
+        if (HP == 0)
         {
             Debug.LogWarning("Player is dead");
             PlayerDeath();
@@ -33,8 +34,9 @@ public class Player : MonoBehaviour
         {
             Debug.LogWarning("Player hit");
             StartCoroutine(DisplayBloodyScreen());
-            healthText.text = $"Health: {HP}";
         }
+
+        bar.setHealthValue(HP);
     }
 
     private void PlayerDeath()
@@ -44,7 +46,6 @@ public class Player : MonoBehaviour
 
         // Dying animation
         Camera.main.GetComponent<Animator>().enabled = true;
-        healthText.gameObject.SetActive(false);
 
         gameOverUI.gameObject.SetActive(true);
         GetComponent<ScreenFader>().StartFade();
@@ -104,7 +105,6 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
         if (!isDead && other.gameObject.CompareTag("EnemyHand"))
         {
             SoundManager.Instance.shootingChannel.clip = SoundManager.Instance.playerHit;

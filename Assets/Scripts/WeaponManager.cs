@@ -30,7 +30,7 @@ public class WeaponManScr : MonoBehaviour
     public Throwable.ThrowableType equippedTacticalType;
     public GameObject smokeGrenadePrefab;
 
-    private void Awake() // Called when loaded!
+    private void Awake()
     {
         if (Instance != null && Instance != this)
         {
@@ -44,7 +44,7 @@ public class WeaponManScr : MonoBehaviour
 
     private void Start()
     {
-        activeWeaponSlot = weaponSlots[0]; // start with the first one
+        activeWeaponSlot = weaponSlots[0]; // start with the first one //
 
         equippedLethalType = Throwable.ThrowableType.None;
         equippedTacticalType = Throwable.ThrowableType.None;
@@ -164,7 +164,7 @@ public class WeaponManScr : MonoBehaviour
         pWeapon.transform.localRotation = Quaternion.Euler(weapon.spawnRotation.x, weapon.spawnRotation.y, weapon.spawnRotation.z);
 
         weapon.animator.enabled = true;
-        weapon.isActiveWeapon = true; // enable the weapon in the script
+        weapon.isActiveWeapon = true;
     }
 
     private void DropCurrentWeapon(GameObject pWeapon)
@@ -184,9 +184,8 @@ public class WeaponManScr : MonoBehaviour
         }
     }
 
-    internal void PuckupAmmoBox(GameObject obj)
+    public void PuckupAmmoBox(GameObject obj)
     {
-
         AmmoBox ammoBox = obj.GetComponent<AmmoBox>();
         switch (ammoBox.ammoType) {
             case AmmoBox.AmmoType.PistolAmmo:
@@ -255,7 +254,7 @@ public class WeaponManScr : MonoBehaviour
 
     private void PickupThrowableAsTactical(Throwable.ThrowableType tactical)
     {
-        print("Picked up tactical");
+        Debug.Log("Picked up tactical");
 
         if (equippedTacticalType == tactical || equippedTacticalType == Throwable.ThrowableType.None)
         {
@@ -269,7 +268,7 @@ public class WeaponManScr : MonoBehaviour
             }
             else
             {
-                print("tactical is max");
+                Debug.Log("tactical is max");
 
             }
         }
@@ -277,7 +276,7 @@ public class WeaponManScr : MonoBehaviour
 
     private void pickupThrowableAsLethal(Throwable.ThrowableType throwableType)
     {
-        print("Picked up Throwable");
+        Debug.Log("Picked up Throwable");
 
         if (equippedLethalType == throwableType || equippedLethalType == Throwable.ThrowableType.None) {
 
@@ -289,7 +288,7 @@ public class WeaponManScr : MonoBehaviour
                 Destroy(InteractionManScr.Instance.hoveringThrowable.gameObject); // Really?
                 HUBManScr.Instance.updateThrowableUI();
             } else {
-                print("Lethal is max");
+                Debug.Log("Lethal is max");
             
             }
         }

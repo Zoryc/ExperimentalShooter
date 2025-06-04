@@ -30,6 +30,9 @@ public class HUBManScr : MonoBehaviour
     public Sprite emptyImageSlot; // Sprite vs Image?
     public Sprite greySlot;
 
+    [Header("Shooting interface")]
+    public TextMeshProUGUI hintText;
+
     public GameObject middleDot;
 
     private void Awake() // Called when loaded!

@@ -5,7 +5,6 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance { get; set; }
 
     public AudioSource shootingChannel;
-    public AudioSource zombieChannel;
 
     public AudioClip shot_1911;
     public AudioClip shot_AK47;

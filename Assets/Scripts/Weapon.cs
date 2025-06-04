@@ -221,7 +221,7 @@ public class WeaponScr : MonoBehaviour
             targetPoint = hit.point;
         }
         else {
-            targetPoint = ray.GetPoint(100); // ok...
+            targetPoint = ray.GetPoint(100);
         }
 
         Vector3 direction = targetPoint - bulletSpawn.position;
