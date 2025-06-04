@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,10 +6,8 @@ public class ZombieChasingState : StateMachineBehaviour
     NavMeshAgent agent;
     Transform player;
 
-    public float chaseSpeed = 6f;
-
-    public float stopChasingDistance = 21;
-    public float attackingDistance = 2.5f;
+    public float chaseSpeed = 4f;
+    private Enemy enemy;
 
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -20,10 +16,9 @@ public class ZombieChasingState : StateMachineBehaviour
 
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = animator.GetComponent<NavMeshAgent>();
+        enemy = animator.GetComponent<Enemy>();
 
         agent.speed = chaseSpeed;
-
-
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -36,13 +31,13 @@ public class ZombieChasingState : StateMachineBehaviour
 
         // -- Check if the agent should stop Chasing -- //
 
-        if (distanceFromPlayer > stopChasingDistance) {
+        if (distanceFromPlayer > enemy.chaseRadius) {
             animator.SetBool("isChasing", false);
         }
 
         // -- Check if the agent should attack -- //
 
-        if (distanceFromPlayer < attackingDistance) {
+        if (distanceFromPlayer < enemy.attackRadius) {
             animator.SetBool("isAttacking", true);
         }
     }

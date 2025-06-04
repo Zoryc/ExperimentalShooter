@@ -1,21 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private int HP = 100; // SerializeField - show private value in inspector
-    private Animator animator;
+    public int HP = 100;
 
+    private Animator animator;
     private NavMeshAgent navAgent;
 
     public bool isDead = false;
 
+    [Header("Roaming setting")]
+    public bool isRoaming = false;
+    public float patrolRadius = 18f;
+    public float chaseRadius = 21f;
+    public float attackRadius = 4f;
+
     void Start()
     {
         animator = this.GetComponent<Animator>();
+        animator.enabled = isRoaming;
+
         navAgent = this.GetComponent<NavMeshAgent>();
     }
 
@@ -35,13 +42,16 @@ public class Enemy : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(this.transform.position, 4f);
+        if (isRoaming)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(this.transform.position, attackRadius);
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(this.transform.position, 18f);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(this.transform.position, patrolRadius);
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(this.transform.position, 21f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(this.transform.position, chaseRadius);
+        }
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,9 +6,9 @@ public class ZombieWalkingState : StateMachineBehaviour
 {
     Transform player;
     NavMeshAgent navAgent;
+    AudioSource enemySource;
 
-    public float detectionArea = 18f;
-    public float patrolSpeed = 2f;
+    public float patrolSpeed = 1.5f;
 
     public List<Transform> waypointsList = new List<Transform>();
 
@@ -17,6 +16,7 @@ public class ZombieWalkingState : StateMachineBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         navAgent = animator.GetComponent<NavMeshAgent>();
+        enemySource = animator.GetComponent<AudioSource>();
 
         navAgent.speed = patrolSpeed;
 
@@ -38,9 +38,9 @@ public class ZombieWalkingState : StateMachineBehaviour
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (SoundManager.Instance.zombieChannel.isPlaying == false) {
-            SoundManager.Instance.zombieChannel.clip = SoundManager.Instance.zombieWalking;
-            SoundManager.Instance.zombieChannel.PlayDelayed(1f);
+        if (enemySource.isPlaying == false) {
+            enemySource.clip = SoundManager.Instance.zombieWalking;
+            enemySource.Play();
         }
 
         // --- Check if the agent is at the waypoint and move it to another one --- //
@@ -54,7 +54,7 @@ public class ZombieWalkingState : StateMachineBehaviour
 
         float distanceFromPlayer = Vector3.Distance(player.position, animator.transform.position);
 
-        if (distanceFromPlayer < detectionArea)
+        if (distanceFromPlayer < animator.GetComponent<Enemy>().patrolRadius)
         {
             animator.SetBool("isChasing", true);
         }
@@ -66,6 +66,6 @@ public class ZombieWalkingState : StateMachineBehaviour
         // stop the agent
         navAgent.SetDestination(navAgent.transform.position);
 
-        SoundManager.Instance.zombieChannel.Stop();
+        enemySource.Stop();
     }
 }

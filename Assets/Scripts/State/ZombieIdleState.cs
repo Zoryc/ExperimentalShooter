@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ZombieIdleState : StateMachineBehaviour
@@ -8,13 +6,13 @@ public class ZombieIdleState : StateMachineBehaviour
     public float idleTimer = 0.0f;
 
     Transform player;
-
-    public float detectionAreaRadius = 18f;
+    Enemy enemy;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         timer = 0.0f;
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        enemy = animator.GetComponent<Enemy>();
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -33,7 +31,7 @@ public class ZombieIdleState : StateMachineBehaviour
 
         float distanceFromPlayer = Vector3.Distance(player.position, animator.transform.position);
 
-        if (distanceFromPlayer < detectionAreaRadius)
+        if (distanceFromPlayer < enemy.patrolRadius)
         {
             animator.SetBool("isChasing", true);
         }

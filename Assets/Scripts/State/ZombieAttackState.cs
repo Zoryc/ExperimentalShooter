@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,13 +5,13 @@ public class ZombieAttackState : StateMachineBehaviour
 {
     Transform player;
     NavMeshAgent agent;
-
-    public float stopAttackingDistance = 2.5f;
+    Enemy enemy;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = animator.GetComponent<NavMeshAgent>();
+        enemy = animator.GetComponent<Enemy>();
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -26,7 +23,7 @@ public class ZombieAttackState : StateMachineBehaviour
 
         float distanceFromPlayer = Vector3.Distance(player.position, animator.transform.position);
 
-        if (distanceFromPlayer > stopAttackingDistance)
+        if (distanceFromPlayer > enemy.attackRadius)
         {
             animator.SetBool("isAttacking", false);
         }
