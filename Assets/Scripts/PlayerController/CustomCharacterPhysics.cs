@@ -8,7 +8,6 @@ public class CustomCharacterPhysics : MonoBehaviour
 {
     public float skinWidth = 0.15f;
     public int maxBounces = 5;
-    public float distanceTheshold = 0.2f;
 
     public LayerMask colLayer;
     public GameObject meshObject;
@@ -83,7 +82,7 @@ public class CustomCharacterPhysics : MonoBehaviour
                 new Vector3(hit.normal.x, 0, hit.normal.z).normalized,
                 -new Vector3(vecInit.x, 0, vecInit.z).normalized);
 
-            if (floorAngle <= 90) // Ground //
+            if (floorAngle <= 90.0f) // Ground //
             {
                 scale = 1;
 
@@ -95,14 +94,17 @@ public class CustomCharacterPhysics : MonoBehaviour
             }
             else // Wall - Slope //
             {
-                
+
                 // Treat slopes as a wall...
 
             }
 
             return vecToPlane + CollideAndSlide(onPlaneVector * scale, pos + vecToPlane, depth + 1, gravityPass, vecInit);
-        } else if (gravityPass)
+        }
+        else if (gravityPass)
+        {
             OnGround = false;
+        }
 
         return mov;
     }
