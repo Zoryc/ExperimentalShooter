@@ -4131,7 +4131,7 @@ Transform:
   m_GameObject: {fileID: 1805992113}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.059999943, y: 6.01, z: -98.7}
+  m_LocalPosition: {x: 0.059999943, y: 8.32, z: -98.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4220,7 +4220,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   meshObject: {fileID: 903958315}
-  OnGround: 0
+  onGround: 0
   debugView: 1
   playerVelocity: {x: 0, y: 0, z: 0}
 --- !u!54 &1805992123

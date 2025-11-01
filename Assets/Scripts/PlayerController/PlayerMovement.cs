@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
 
     private CustomCharacterPhysics controller;
 
+    private float jumpTest = 0.0f;
+
     void Start()
     {
         controller = this.GetComponent<CustomCharacterPhysics>();
@@ -21,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        if ((horizontal != 0.0 || vertical != 0.0))
+        if (horizontal != 0.0 || vertical != 0.0)
         {
             Vector2 matrixRotation = MatrixOperation.Matrix_Rotation(vertical, horizontal, (visionObject.eulerAngles.y * Mathf.Deg2Rad));
             Vector2 speedDirection = new Vector3(matrixRotation.y, matrixRotation.x);
