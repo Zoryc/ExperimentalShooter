@@ -1,228 +1,479 @@
-using UnityEngine;
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-// Cartoon FX  - (c) 2012-2016 Jean Moreno
-
+// Cartoon FX - (c) 2012-2016 Jean Moreno
+//
 // Spawn System:
-// Preload GameObject to reuse them later, avoiding to Instantiate them.
-// Very useful for mobile platforms.
+// Preload GameObjects to reuse them later, avoiding Instantiate calls.
+// Useful for reducing runtime allocations and garbage collection.
 
 public class CFX_SpawnSystem : MonoBehaviour
 {
-	/// <summary>
-	/// Get the next available preloaded Object.
-	/// </summary>
-	/// <returns>
-	/// The next available preloaded Object.
-	/// </returns>
-	/// <param name='sourceObj'>
-	/// The source Object from which to get a preloaded copy.
-	/// </param>
-	/// <param name='activateObject'>
-	/// Activates the object before returning it.
-	/// </param>
-	static public GameObject GetNextObject(GameObject sourceObj, bool activateObject = true)
-	{
-		int uniqueId = sourceObj.GetInstanceID();
-		
-		if(!instance.poolCursors.ContainsKey(uniqueId))
-		{
-			Debug.LogError("[CFX_SpawnSystem.GetNextObject()] Object hasn't been preloaded: " + sourceObj.name + " (ID:" + uniqueId + ")\n", instance);
-			return null;
-		}
-		
-		int cursor = instance.poolCursors[uniqueId];
-		GameObject returnObj = null;
-		if(instance.onlyGetInactiveObjects)
-		{
-			int loop = cursor;
-			while(true)
-			{
-				returnObj = instance.instantiatedObjects[uniqueId][cursor];
-				instance.increasePoolCursor(uniqueId);
-				cursor = instance.poolCursors[uniqueId];
+    // ------------------------------------------------------------------------
+    // Static instance
+    // ------------------------------------------------------------------------
 
-				if(returnObj != null && !returnObj.activeSelf)
-					break;
+    private static CFX_SpawnSystem instance;
 
-				//complete loop: no active instance available
-				if(cursor == loop)
-				{
-					if(instance.instantiateIfNeeded)
-					{
-						Debug.Log("[CFX_SpawnSystem.GetNextObject()] A new instance has been created for \"" + sourceObj.name + "\" because no active instance were found in the pool.\n", instance);
-						PreloadObject(sourceObj);
-						var list = instance.instantiatedObjects[uniqueId];
-						returnObj = list[list.Count-1];
-						break;
-					}
-					else
-					{
-						Debug.LogWarning("[CFX_SpawnSystem.GetNextObject()] There are no active instances available in the pool for \"" + sourceObj.name +"\"\nYou may need to increase the preloaded object count for this prefab?", instance);
-						return null;
-					}
-				}
-			}
-		}
-		else
-		{
-			returnObj = instance.instantiatedObjects[uniqueId][cursor];
-			instance.increasePoolCursor(uniqueId);
-		}
+    // ------------------------------------------------------------------------
+    // Inspector
+    // ------------------------------------------------------------------------
 
-		if(activateObject && returnObj != null)
-			returnObj.SetActive(true);
+    /// <summary>
+    /// Objects that should be preloaded when the scene starts.
+    /// </summary>
+    public GameObject[] objectsToPreload = Array.Empty<GameObject>();
 
-		return returnObj;
-	}
-	
-	/// <summary>
-	/// Preloads an object a number of times in the pool.
-	/// </summary>
-	/// <param name='sourceObj'>
-	/// The source Object.
-	/// </param>
-	/// <param name='poolSize'>
-	/// The number of times it will be instantiated in the pool (i.e. the max number of same object that would appear simultaneously in your Scene).
-	/// </param>
-	static public void PreloadObject(GameObject sourceObj, int poolSize = 1)
-	{
-		instance.addObjectToPool(sourceObj, poolSize);
-	}
-	
-	/// <summary>
-	/// Unloads all the preloaded objects from a source Object.
-	/// </summary>
-	/// <param name='sourceObj'>
-	/// Source object.
-	/// </param>
-	static public void UnloadObjects(GameObject sourceObj)
-	{
-		instance.removeObjectsFromPool(sourceObj);
-	}
-	
-	/// <summary>
-	/// Gets a value indicating whether all objects defined in the Editor are loaded or not.
-	/// </summary>
-	/// <value>
-	/// <c>true</c> if all objects are loaded; otherwise, <c>false</c>.
-	/// </value>
-	static public bool AllObjectsLoaded
-	{
-		get
-		{
-			return instance.allObjectsLoaded;
-		}
-	}
-	
-	// INTERNAL SYSTEM ----------------------------------------------------------------------------------------------------------------------------------------
-	
-	static private CFX_SpawnSystem instance;
-	
-	public GameObject[] objectsToPreload = new GameObject[0];
-	public int[] objectsToPreloadTimes = new int[0];
-	public bool hideObjectsInHierarchy = false;
-	public bool spawnAsChildren = true;
-	public bool onlyGetInactiveObjects = false;
-	public bool instantiateIfNeeded = false;
-	
-	private bool allObjectsLoaded;
-	private Dictionary<int,List<GameObject>> instantiatedObjects = new Dictionary<int, List<GameObject>>();
-	private Dictionary<int,int> poolCursors = new Dictionary<int, int>();
-	
-	private void addObjectToPool(GameObject sourceObject, int number)
-	{
-		int uniqueId = sourceObject.GetInstanceID();
+    /// <summary>
+    /// Number of instances to preload for each object.
+    /// </summary>
+    public int[] objectsToPreloadTimes = Array.Empty<int>();
 
-		//Add new entry if it doesn't exist
-		if(!instantiatedObjects.ContainsKey(uniqueId))
-		{
-			instantiatedObjects.Add(uniqueId, new List<GameObject>());
-			poolCursors.Add(uniqueId, 0);
-		}
-		
-		//Add the new objects
-		GameObject newObj;
-		for(int i = 0; i < number; i++)
-		{
-			newObj = (GameObject)Instantiate(sourceObject);
-				newObj.SetActive(false);
+    /// <summary>
+    /// Hide spawned objects from the hierarchy.
+    /// </summary>
+    public bool hideObjectsInHierarchy = false;
 
-			//Set flag to not destruct object
-			CFX_AutoDestructShuriken[] autoDestruct = newObj.GetComponentsInChildren<CFX_AutoDestructShuriken>(true);
-			foreach(CFX_AutoDestructShuriken ad in autoDestruct)
-			{
-				ad.OnlyDeactivate = true;
-			}
-			//Set flag to not destruct light
-			CFX_LightIntensityFade[] lightIntensity = newObj.GetComponentsInChildren<CFX_LightIntensityFade>(true);
-			foreach(CFX_LightIntensityFade li in lightIntensity)
-			{
-				li.autodestruct = false;
-			}
-			
-			instantiatedObjects[uniqueId].Add(newObj);
-			
-			if(hideObjectsInHierarchy)
-				newObj.hideFlags = HideFlags.HideInHierarchy;
+    /// <summary>
+    /// Make spawned objects children of this spawn system.
+    /// </summary>
+    public bool spawnAsChildren = true;
 
-			if(spawnAsChildren)
-				newObj.transform.parent = this.transform;
-		}
-	}
-	
-	private void removeObjectsFromPool(GameObject sourceObject)
-	{
-		int uniqueId = sourceObject.GetInstanceID();
-		
-		if(!instantiatedObjects.ContainsKey(uniqueId))
-		{
-			Debug.LogWarning("[CFX_SpawnSystem.removeObjectsFromPool()] There aren't any preloaded object for: " + sourceObject.name + " (ID:" + uniqueId + ")\n", this.gameObject);
-			return;
-		}
-		
-		//Destroy all objects
-		for(int i = instantiatedObjects[uniqueId].Count - 1; i >= 0; i--)
-		{
-			GameObject obj = instantiatedObjects[uniqueId][i];
-			instantiatedObjects[uniqueId].RemoveAt(i);
-			GameObject.Destroy(obj);
-		}
-		
-		//Remove pool entry
-		instantiatedObjects.Remove(uniqueId);
-		poolCursors.Remove(uniqueId);
-	}
+    /// <summary>
+    /// Only return inactive objects from the pool.
+    /// </summary>
+    public bool onlyGetInactiveObjects = false;
 
-	private void increasePoolCursor(int uniqueId)
-	{
-		instance.poolCursors[uniqueId]++;
-		if(instance.poolCursors[uniqueId] >= instance.instantiatedObjects[uniqueId].Count)
-		{
-			instance.poolCursors[uniqueId] = 0;
-		}
-	}
+    /// <summary>
+    /// Create a new object if the pool has no inactive objects available.
+    /// </summary>
+    public bool instantiateIfNeeded = false;
 
-	//--------------------------------
+    // ------------------------------------------------------------------------
+    // Internal state
+    // ------------------------------------------------------------------------
 
-	void Awake()
-	{
-		if(instance != null)
-			Debug.LogWarning("CFX_SpawnSystem: There should only be one instance of CFX_SpawnSystem per Scene!\n", this.gameObject);
-		
-		instance = this;
-	}
-	
-	void Start()
-	{
-		allObjectsLoaded = false;
-		
-		for(int i = 0; i < objectsToPreload.Length; i++)
-		{
-			PreloadObject(objectsToPreload[i], objectsToPreloadTimes[i]);
-		}
-		
-		allObjectsLoaded = true;
-	}
+    private bool allObjectsLoaded;
+
+    /*
+     * The original implementation used an integer ID to identify the source
+     * GameObject.
+     *
+     * We use the GameObject reference itself as the key instead.
+     *
+     * This eliminates the need for GetEntityId() / GetInstanceID().
+     */
+    private readonly Dictionary<GameObject, List<GameObject>> instantiatedObjects =
+        new();
+
+    private readonly Dictionary<GameObject, int> poolCursors =
+        new();
+
+    // ------------------------------------------------------------------------
+    // Public API
+    // ------------------------------------------------------------------------
+
+    /// <summary>
+    /// Gets the next available preloaded object.
+    /// </summary>
+    /// <param name="sourceObj">
+    /// The source object from which the pool was created.
+    /// </param>
+    /// <param name="activateObject">
+    /// Activates the object before returning it.
+    /// </param>
+    public static GameObject GetNextObject(
+        GameObject sourceObj,
+        bool activateObject = true)
+    {
+        if (instance == null)
+        {
+            Debug.LogError(
+                "[CFX_SpawnSystem.GetNextObject()] " +
+                "No CFX_SpawnSystem instance exists in the scene.");
+
+            return null;
+        }
+
+        if (sourceObj == null)
+        {
+            Debug.LogError(
+                "[CFX_SpawnSystem.GetNextObject()] " +
+                "sourceObj is null.");
+
+            return null;
+        }
+
+        if (!instance.instantiatedObjects.TryGetValue(
+                sourceObj,
+                out List<GameObject> pool))
+        {
+            Debug.LogError(
+                "[CFX_SpawnSystem.GetNextObject()] " +
+                "Object hasn't been preloaded: " +
+                sourceObj.name,
+                instance);
+
+            return null;
+        }
+
+        if (pool.Count == 0)
+        {
+            Debug.LogWarning(
+                "[CFX_SpawnSystem.GetNextObject()] " +
+                "The pool is empty for: " +
+                sourceObj.name,
+                instance);
+
+            return null;
+        }
+
+        int cursor = instance.poolCursors[sourceObj];
+
+        GameObject returnObj = null;
+
+        // --------------------------------------------------------------------
+        // Find an inactive object
+        // --------------------------------------------------------------------
+
+        if (instance.onlyGetInactiveObjects)
+        {
+            int startingCursor = cursor;
+
+            while (true)
+            {
+                returnObj = pool[cursor];
+
+                instance.IncreasePoolCursor(sourceObj);
+
+                cursor = instance.poolCursors[sourceObj];
+
+                if (returnObj != null && !returnObj.activeSelf)
+                    break;
+
+                // We've checked the entire pool.
+                if (cursor == startingCursor)
+                {
+                    if (instance.instantiateIfNeeded)
+                    {
+                        Debug.Log(
+                            "[CFX_SpawnSystem.GetNextObject()] " +
+                            "A new instance has been created for \"" +
+                            sourceObj.name +
+                            "\" because no inactive instance was found.",
+                            instance);
+
+                        instance.AddObjectToPool(sourceObj, 1);
+
+                        pool = instance.instantiatedObjects[sourceObj];
+
+                        returnObj = pool[^1];
+
+                        break;
+                    }
+
+                    Debug.LogWarning(
+                        "[CFX_SpawnSystem.GetNextObject()] " +
+                        "There are no inactive instances available in the " +
+                        "pool for \"" +
+                        sourceObj.name +
+                        "\".\n" +
+                        "You may need to increase the preloaded object count.",
+                        instance);
+
+                    return null;
+                }
+            }
+        }
+        else
+        {
+            // ----------------------------------------------------------------
+            // Simply return the next object in the pool.
+            // ----------------------------------------------------------------
+
+            returnObj = pool[cursor];
+
+            instance.IncreasePoolCursor(sourceObj);
+        }
+
+        // --------------------------------------------------------------------
+        // Activate
+        // --------------------------------------------------------------------
+
+        if (activateObject && returnObj != null)
+            returnObj.SetActive(true);
+
+        return returnObj;
+    }
+
+    /// <summary>
+    /// Preloads an object a number of times.
+    /// </summary>
+    public static void PreloadObject(
+        GameObject sourceObj,
+        int poolSize = 1)
+    {
+        if (instance == null)
+        {
+            Debug.LogError(
+                "[CFX_SpawnSystem.PreloadObject()] " +
+                "No CFX_SpawnSystem instance exists in the scene.");
+
+            return;
+        }
+
+        if (sourceObj == null)
+        {
+            Debug.LogError(
+                "[CFX_SpawnSystem.PreloadObject()] " +
+                "sourceObj is null.");
+
+            return;
+        }
+
+        if (poolSize <= 0)
+            return;
+
+        instance.AddObjectToPool(sourceObj, poolSize);
+    }
+
+    /// <summary>
+    /// Unloads all preloaded objects belonging to a source object.
+    /// </summary>
+    public static void UnloadObjects(GameObject sourceObj)
+    {
+        if (instance == null)
+        {
+            Debug.LogError(
+                "[CFX_SpawnSystem.UnloadObjects()] " +
+                "No CFX_SpawnSystem instance exists in the scene.");
+
+            return;
+        }
+
+        if (sourceObj == null)
+            return;
+
+        instance.RemoveObjectsFromPool(sourceObj);
+    }
+
+    /// <summary>
+    /// Indicates whether all objects configured in the inspector have loaded.
+    /// </summary>
+    public static bool AllObjectsLoaded =>
+        instance != null && instance.allObjectsLoaded;
+
+    // ------------------------------------------------------------------------
+    // Pool management
+    // ------------------------------------------------------------------------
+
+    /// <summary>
+    /// Adds instances of an object to its pool.
+    /// </summary>
+    private void AddObjectToPool(
+        GameObject sourceObject,
+        int number)
+    {
+        if (sourceObject == null || number <= 0)
+            return;
+
+        // --------------------------------------------------------------------
+        // Create the pool if it doesn't exist.
+        // --------------------------------------------------------------------
+
+        if (!instantiatedObjects.TryGetValue(
+                sourceObject,
+                out List<GameObject> pool))
+        {
+            pool = new List<GameObject>(number);
+
+            instantiatedObjects.Add(sourceObject, pool);
+            poolCursors.Add(sourceObject, 0);
+        }
+
+        // --------------------------------------------------------------------
+        // Instantiate objects.
+        // --------------------------------------------------------------------
+
+        for (int i = 0; i < number; i++)
+        {
+            GameObject newObj = Instantiate(sourceObject);
+
+            // The object must start inactive.
+            newObj.SetActive(false);
+
+            // ---------------------------------------------------------------
+            // Prevent Cartoon FX auto-destruction.
+            // ---------------------------------------------------------------
+
+            CFX_AutoDestructShuriken[] autoDestruct =
+                newObj.GetComponentsInChildren<CFX_AutoDestructShuriken>(
+                    true);
+
+            foreach (CFX_AutoDestructShuriken ad in autoDestruct)
+            {
+                if (ad != null)
+                    ad.OnlyDeactivate = true;
+            }
+
+            // ---------------------------------------------------------------
+            // Prevent light auto-destruction.
+            // ---------------------------------------------------------------
+
+            CFX_LightIntensityFade[] lightIntensity =
+                newObj.GetComponentsInChildren<CFX_LightIntensityFade>(
+                    true);
+
+            foreach (CFX_LightIntensityFade li in lightIntensity)
+            {
+                if (li != null)
+                    li.autodestruct = false;
+            }
+
+            // ---------------------------------------------------------------
+            // Store object.
+            // ---------------------------------------------------------------
+
+            pool.Add(newObj);
+
+            // ---------------------------------------------------------------
+            // Hierarchy visibility.
+            // ---------------------------------------------------------------
+
+            if (hideObjectsInHierarchy)
+                newObj.hideFlags = HideFlags.HideInHierarchy;
+
+            // ---------------------------------------------------------------
+            // Parent.
+            // ---------------------------------------------------------------
+
+            if (spawnAsChildren)
+                newObj.transform.SetParent(transform, false);
+        }
+    }
+
+    /// <summary>
+    /// Removes and destroys all pooled instances of a source object.
+    /// </summary>
+    private void RemoveObjectsFromPool(GameObject sourceObject)
+    {
+        if (!instantiatedObjects.TryGetValue(
+                sourceObject,
+                out List<GameObject> pool))
+        {
+            Debug.LogWarning(
+                "[CFX_SpawnSystem.RemoveObjectsFromPool()] " +
+                "There aren't any preloaded objects for: " +
+                sourceObject.name,
+                gameObject);
+
+            return;
+        }
+
+        // --------------------------------------------------------------------
+        // Destroy all pooled objects.
+        // --------------------------------------------------------------------
+
+        for (int i = pool.Count - 1; i >= 0; i--)
+        {
+            GameObject obj = pool[i];
+
+            if (obj != null)
+                Destroy(obj);
+        }
+
+        pool.Clear();
+
+        // --------------------------------------------------------------------
+        // Remove dictionary entries.
+        // --------------------------------------------------------------------
+
+        instantiatedObjects.Remove(sourceObject);
+        poolCursors.Remove(sourceObject);
+    }
+
+    /// <summary>
+    /// Advances the pool cursor.
+    /// </summary>
+    private void IncreasePoolCursor(GameObject sourceObject)
+    {
+        if (!instantiatedObjects.TryGetValue(
+                sourceObject,
+                out List<GameObject> pool))
+        {
+            return;
+        }
+
+        if (pool.Count == 0)
+        {
+            poolCursors[sourceObject] = 0;
+            return;
+        }
+
+        int cursor = poolCursors[sourceObject];
+
+        cursor++;
+
+        if (cursor >= pool.Count)
+            cursor = 0;
+
+        poolCursors[sourceObject] = cursor;
+    }
+
+    // ------------------------------------------------------------------------
+    // Unity lifecycle
+    // ------------------------------------------------------------------------
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Debug.LogWarning(
+                "CFX_SpawnSystem: There should only be one instance " +
+                "of CFX_SpawnSystem per Scene!",
+                gameObject);
+        }
+
+        instance = this;
+    }
+
+    private void Start()
+    {
+        allObjectsLoaded = false;
+
+        int count = Mathf.Min(
+            objectsToPreload.Length,
+            objectsToPreloadTimes.Length);
+
+        for (int i = 0; i < count; i++)
+        {
+            GameObject sourceObject = objectsToPreload[i];
+
+            if (sourceObject == null)
+            {
+                Debug.LogWarning(
+                    "[CFX_SpawnSystem] " +
+                    $"objectsToPreload[{i}] is null.",
+                    this);
+
+                continue;
+            }
+
+            int amount = objectsToPreloadTimes[i];
+
+            if (amount <= 0)
+                continue;
+
+            PreloadObject(sourceObject, amount);
+        }
+
+        allObjectsLoaded = true;
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this)
+            instance = null;
+    }
 }
