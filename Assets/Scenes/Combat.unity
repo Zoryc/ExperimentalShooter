@@ -144,7 +144,7 @@ Transform:
   m_GameObject: {fileID: 36959840}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.9, z: 0}
+  m_LocalPosition: {x: 0, y: 1.56, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4331,11 +4331,8 @@ MonoBehaviour:
   skinWidth: 0.15
   maxBounces: 5
   maxSlopeAngle: 45
-  colLayer:
-    serializedVersion: 2
-    m_Bits: 8
   meshObject: {fileID: 903958315}
-  groundCheckDistance: 0.1
+  groundCheckDistance: 0.2
   onGround: 0
   debugView: 1
   playerVelocity: {x: 0, y: 0, z: 0}

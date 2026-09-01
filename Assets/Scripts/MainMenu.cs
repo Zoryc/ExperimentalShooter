@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public TextMeshProUGUI highScoreUI;
-    public string newGameScene = "Combat";
+    public string newGameScene;
 
     public AudioClip bg_music;
     public AudioSource main_channel;
