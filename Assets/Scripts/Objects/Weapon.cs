@@ -9,13 +9,15 @@ public class WeaponScr : MonoBehaviour
 
     [Header("Shooting")]
     // Shooting
-    public bool isShooting, readyToShoot;
+    public bool isShooting,
+        readyToShoot;
     bool allowReset = true;
     public float shootingDelay = 2f;
 
     [Header("Burst")]
     // Burst
-    public int bulletsPerBurst = 1; // Can't be zero!
+    [Min(1)]
+    public int bulletsPerBurst; // Can't be zero!
     public int burstBulletLeft; // Remove that?
 
     [Header("Spread")]
@@ -38,31 +40,39 @@ public class WeaponScr : MonoBehaviour
     // Animation
     internal Animator animator; //Script is accessible but not from inspector
 
-
     // Loading
     public float reloadTime;
-    public int magazineSize, bulletsLeft;
+    public int magazineSize,
+        bulletsLeft;
     public bool isReloading;
 
-    public enum WeaponModel { 
+    public enum WeaponModel
+    {
         Pistol1911,
-        AK47
+        AK47,
     }
 
-    public enum ShootingMode { 
+    public enum ShootingMode
+    {
         Single,
         Burst,
-        Auto
+        Auto,
     }
 
     public WeaponModel weaponModel;
     public ShootingMode currentShootingMode;
 
-    bool isABS;
+    bool isADS;
 
     [Header("Spawn properties")]
     public Vector3 spawnPosition;
     public Vector3 spawnRotation;
+
+    private  Outline outline;
+
+    private static int recoil_id = Animator.StringToHash("RECOIL");
+    private static int recoil_ads_id = Animator.StringToHash("RECOIL_ADS");
+    private static int reload_id = Animator.StringToHash("RELOAD");
 
     private void Awake() // Called when loaded!
     {
@@ -73,13 +83,16 @@ public class WeaponScr : MonoBehaviour
         bulletsLeft = magazineSize;
 
         spreadIntensity = hipSpreadIntensity;
+
+        // cache
+        outline = this.GetComponent<Outline>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isActiveWeapon) {
-
+        if (isActiveWeapon)
+        {
             if (Input.GetMouseButtonDown(1))
             {
                 EnterADS();
@@ -90,7 +103,7 @@ public class WeaponScr : MonoBehaviour
                 ExitADS();
             }
 
-            GetComponent<Outline>().enabled = false;
+            outline.enabled = false;
 
             if (bulletsLeft == 0 && isShooting)
             {
@@ -102,18 +115,25 @@ public class WeaponScr : MonoBehaviour
             {
                 isShooting = Input.GetKey(KeyCode.Mouse0); // Holding
             }
-            else if (currentShootingMode == ShootingMode.Single || currentShootingMode == ShootingMode.Burst)
+            else if (
+                currentShootingMode == ShootingMode.Single
+                || currentShootingMode == ShootingMode.Burst
+            )
             {
-
                 isShooting = Input.GetKeyDown(KeyCode.Mouse0); // clicking
             }
 
-            if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && !isReloading && WeaponManScr.Instance.checkAmmoLeft(weaponModel) > 0)
+            if (
+                Input.GetKeyDown(KeyCode.R)
+                && bulletsLeft < magazineSize
+                && !isReloading
+                && WeaponManScr.Instance.checkAmmoLeft(weaponModel) > 0
+            )
             {
                 Reload();
             }
 
-            if (readyToShoot && isShooting && bulletsLeft > 0)
+            if (readyToShoot && isShooting && bulletsLeft > 0 && !isReloading)
             {
                 burstBulletLeft = bulletsPerBurst;
                 FireWeapon();
@@ -121,16 +141,18 @@ public class WeaponScr : MonoBehaviour
         }
     }
 
-    private void EnterADS() {
+    private void EnterADS()
+    {
         animator.SetBool("ADS_MODE", true);
-        isABS = true;
+        isADS = true;
         HUBManScr.Instance.middleDot.SetActive(false);
         spreadIntensity = adsSpreadIntensity;
     }
 
-    private void ExitADS() {
+    private void ExitADS()
+    {
         animator.SetBool("ADS_MODE", false);
-        isABS = false;
+        isADS = false;
         HUBManScr.Instance.middleDot.SetActive(true);
         spreadIntensity = hipSpreadIntensity;
     }
@@ -141,11 +163,13 @@ public class WeaponScr : MonoBehaviour
 
         muzzleEffect.GetComponent<ParticleSystem>().Play();
 
-        if (isABS)
+        if (isADS)
         {
-            animator.SetTrigger("RECOIL_ADS");
-        } else {
-            animator.SetTrigger("RECOIL");
+            animator.SetTrigger(recoil_ads_id);
+        }
+        else
+        {
+            animator.SetTrigger(recoil_id);
         }
 
         SoundManager.Instance.PlayShootingSound(weaponModel);
@@ -162,18 +186,22 @@ public class WeaponScr : MonoBehaviour
         bul.bulletDamage = weaponDamage;
 
         bullet.transform.forward = shootingDirection;
-        bullet.GetComponent<Rigidbody>().AddForce(bulletSpawn.forward.normalized * bulletVelocity, ForceMode.Impulse);
+        bullet
+            .GetComponent<Rigidbody>()
+            .AddForce(shootingDirection * bulletVelocity, ForceMode.Impulse);
         // Destroy the bullet after his lifetime
         StartCoroutine(DestroyBulletAfterTime(bullet, bulletPrefabLifeTime));
 
         // Done shooting?
-        if (allowReset) {
+        if (allowReset)
+        {
             Invoke("resetShot", shootingDelay); // wth is that
             allowReset = false;
         }
 
-        // Burst 
-        if (currentShootingMode == ShootingMode.Burst && burstBulletLeft > 1) {
+        // Burst
+        if (currentShootingMode == ShootingMode.Burst && burstBulletLeft > 1)
+        {
             burstBulletLeft--;
             Invoke("FireWeapon", shootingDelay);
         }
@@ -183,35 +211,33 @@ public class WeaponScr : MonoBehaviour
     {
         SoundManager.Instance.PlayReloadSound(weaponModel);
 
-        // Problem with 1911
-        animator.SetTrigger("RELOAD");
+        animator.SetTrigger(reload_id);
 
         isReloading = true;
         Invoke("ReloadCompleted", reloadTime); // Why invoke?
     }
 
-    private void ReloadCompleted() {
+    private void ReloadCompleted()
+    {
+        int ammoAvailable = WeaponManScr.Instance.checkAmmoLeft(weaponModel);
+        int bulletsNeeded = magazineSize - bulletsLeft;
+        int bulletsToLoad = Mathf.Min(bulletsNeeded, ammoAvailable);
 
-        if (WeaponManScr.Instance.checkAmmoLeft(weaponModel) > 0)
-        {
-            bulletsLeft = magazineSize;
-        } else {
-            bulletsLeft = WeaponManScr.Instance.checkAmmoLeft(weaponModel);
-        }
-
-        WeaponManScr.Instance.DecreaseTotalAmmo(magazineSize, weaponModel);
+        bulletsLeft += bulletsToLoad;
+        WeaponManScr.Instance.DecreaseTotalAmmo(bulletsToLoad, weaponModel);
         isReloading = false;
     }
 
-    private void resetShot() {
+    private void resetShot()
+    {
         readyToShoot = true;
         allowReset = true;
     }
 
-    public Vector3 calculateDirectionAndSpread() {
-
+    public Vector3 calculateDirectionAndSpread()
+    {
         // Main Camera!
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0f, 0f, 0));
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
         Vector3 targetPoint;
@@ -220,7 +246,8 @@ public class WeaponScr : MonoBehaviour
         {
             targetPoint = hit.point;
         }
-        else {
+        else
+        {
             targetPoint = ray.GetPoint(100);
         }
 
@@ -234,7 +261,8 @@ public class WeaponScr : MonoBehaviour
         return direction + new Vector3(0, y, z);
     }
 
-    private IEnumerator DestroyBulletAfterTime(GameObject bullet, float bulletTime) {
+    private IEnumerator DestroyBulletAfterTime(GameObject bullet, float bulletTime)
+    {
         yield return new WaitForSeconds(bulletTime);
         Destroy(bullet);
     }

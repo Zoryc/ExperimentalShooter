@@ -76,14 +76,7 @@ public class CustomCharacterPhysics : MonoBehaviour
 
         environmentMask = 1 << environmentLayer;
 
-        solver = new CharacterCollisionSolver(
-            transform,
-            coll,
-            environmentMask,
-            maxBounces,
-            maxSlopeAngle,
-            skinWidth
-        );
+        solver = new CharacterCollisionSolver(transform, coll, environmentMask, maxBounces, maxSlopeAngle, skinWidth);
 
         capsule.Refresh(coll, skinWidth);
         RefreshGroundState();
@@ -110,11 +103,7 @@ public class CustomCharacterPhysics : MonoBehaviour
 
         if (debugView)
         {
-            Debug.DrawRay(
-                result.rayStart,
-                Vector3.down * result.rayDistance,
-                onGround ? Color.green : Color.red
-            );
+            Debug.DrawRay(result.rayStart, Vector3.down * result.rayDistance, onGround ? Color.green : Color.red);
 
             if (result.hit.collider != null)
             {
@@ -161,6 +150,70 @@ public class CustomCharacterPhysics : MonoBehaviour
     }
 
     // ================================================================
+    // DEPENETRATION
+    // ================================================================
+
+    /// <summary>
+    /// Pushes the capsule out of any environment collider it currently
+    /// overlaps. This is a discrete safety net on top of the swept
+    /// collide-and-slide above — sweeps only ever ask "what's in the way
+    /// between here and there", they don't notice (or fix) an overlap that
+    /// already exists at the start. A tiny overlap left behind by rounding
+    /// tends to make every subsequent CapsuleCastAll — in any direction —
+    /// report an immediate hit, which is what a total movement freeze
+    /// actually looks like from here.
+    /// </summary>
+    private void Depenetrate()
+    {
+        const int maxIterations = 4;
+        const float pushExtra = 0.001f;
+
+        for (int i = 0; i < maxIterations; i++)
+        {
+            capsule.Refresh(coll, skinWidth);
+
+            Collider[] overlaps = Physics.OverlapCapsule(
+                capsule.Center - capsule.CastOffset,
+                capsule.Center + capsule.CastOffset,
+                capsule.CastRadius,
+                environmentMask,
+                QueryTriggerInteraction.Ignore
+            );
+
+            bool resolvedAny = false;
+
+            foreach (Collider other in overlaps)
+            {
+                if (other == coll)
+                    continue;
+
+                if (other.transform == transform || other.transform.IsChildOf(transform))
+                    continue;
+
+                bool overlapping = Physics.ComputePenetration(
+                    coll,
+                    coll.transform.position,
+                    coll.transform.rotation,
+                    other,
+                    other.transform.position,
+                    other.transform.rotation,
+                    out Vector3 pushDirection,
+                    out float pushDistance
+                );
+
+                if (overlapping && pushDistance > 0f)
+                {
+                    transform.position += pushDirection * (pushDistance + pushExtra);
+                    resolvedAny = true;
+                }
+            }
+
+            if (!resolvedAny)
+                break;
+        }
+    }
+
+    // ================================================================
     // MOVEMENT
     // ================================================================
 
@@ -196,13 +249,8 @@ public class CustomCharacterPhysics : MonoBehaviour
 
         Vector3 horizontalMovement = horizontalVelocity * dt;
 
-        CharacterCollisionSolver.Result horizontalResult = solver.Slide(
-            horizontalMovement,
-            startPosition,
-            capsule,
-            isVertical: false,
-            debugView
-        );
+        CharacterCollisionSolver.Result horizontalResult =
+            solver.Slide(horizontalMovement, startPosition, capsule, isVertical: false, debugView);
 
         // ------------------------------------------------------------
         // Vertical movement
@@ -210,13 +258,8 @@ public class CustomCharacterPhysics : MonoBehaviour
 
         Vector3 verticalMovement = playerVelocity * dt;
 
-        CharacterCollisionSolver.Result verticalResult = solver.Slide(
-            verticalMovement,
-            startPosition + horizontalResult.movement,
-            capsule,
-            isVertical: true,
-            debugView
-        );
+        CharacterCollisionSolver.Result verticalResult =
+            solver.Slide(verticalMovement, startPosition + horizontalResult.movement, capsule, isVertical: true, debugView);
 
         if (verticalResult.landedOnGround)
         {
@@ -240,17 +283,21 @@ public class CustomCharacterPhysics : MonoBehaviour
         // Body is a CHILD of Player — moving Player moves Body automatically.
         transform.position += totalMovement;
 
+        // Safety net: if rounding from the sweeps above (or a corner, or a
+        // fast-moving platform) left the capsule slightly embedded in a
+        // collider, push it back out now. Left unresolved, this tends to
+        // make CapsuleCastAll report an immediate hit in EVERY direction
+        // next frame — not just into the wall — which looks exactly like
+        // "touched a wall and now nothing works".
+        Depenetrate();
+
         capsule.Refresh(coll, skinWidth);
         RefreshGroundState();
 
         if (debugView)
         {
             Debug.DrawLine(startPosition, startPosition + horizontalResult.movement, Color.blue);
-            Debug.DrawLine(
-                startPosition + horizontalResult.movement,
-                startPosition + totalMovement,
-                Color.yellow
-            );
+            Debug.DrawLine(startPosition + horizontalResult.movement, startPosition + totalMovement, Color.yellow);
         }
     }
 }
