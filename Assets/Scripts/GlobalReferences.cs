@@ -19,5 +19,6 @@ public class GlobalReferences : MonoBehaviour
         else {
             Instance = this;
         }
+        DontDestroyOnLoad(Instance);
     }
 }

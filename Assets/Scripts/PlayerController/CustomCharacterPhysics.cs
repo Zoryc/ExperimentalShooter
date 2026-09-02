@@ -76,7 +76,14 @@ public class CustomCharacterPhysics : MonoBehaviour
 
         environmentMask = 1 << environmentLayer;
 
-        solver = new CharacterCollisionSolver(transform, coll, environmentMask, maxBounces, maxSlopeAngle, skinWidth);
+        solver = new CharacterCollisionSolver(
+            transform,
+            coll,
+            environmentMask,
+            maxBounces,
+            maxSlopeAngle,
+            skinWidth
+        );
 
         capsule.Refresh(coll, skinWidth);
         RefreshGroundState();
@@ -103,7 +110,11 @@ public class CustomCharacterPhysics : MonoBehaviour
 
         if (debugView)
         {
-            Debug.DrawRay(result.rayStart, Vector3.down * result.rayDistance, onGround ? Color.green : Color.red);
+            Debug.DrawRay(
+                result.rayStart,
+                Vector3.down * result.rayDistance,
+                onGround ? Color.green : Color.red
+            );
 
             if (result.hit.collider != null)
             {
@@ -249,8 +260,13 @@ public class CustomCharacterPhysics : MonoBehaviour
 
         Vector3 horizontalMovement = horizontalVelocity * dt;
 
-        CharacterCollisionSolver.Result horizontalResult =
-            solver.Slide(horizontalMovement, startPosition, capsule, isVertical: false, debugView);
+        CharacterCollisionSolver.Result horizontalResult = solver.Slide(
+            horizontalMovement,
+            startPosition,
+            capsule,
+            isVertical: false,
+            debugView
+        );
 
         // ------------------------------------------------------------
         // Vertical movement
@@ -258,8 +274,13 @@ public class CustomCharacterPhysics : MonoBehaviour
 
         Vector3 verticalMovement = playerVelocity * dt;
 
-        CharacterCollisionSolver.Result verticalResult =
-            solver.Slide(verticalMovement, startPosition + horizontalResult.movement, capsule, isVertical: true, debugView);
+        CharacterCollisionSolver.Result verticalResult = solver.Slide(
+            verticalMovement,
+            startPosition + horizontalResult.movement,
+            capsule,
+            isVertical: true,
+            debugView
+        );
 
         if (verticalResult.landedOnGround)
         {
@@ -297,7 +318,11 @@ public class CustomCharacterPhysics : MonoBehaviour
         if (debugView)
         {
             Debug.DrawLine(startPosition, startPosition + horizontalResult.movement, Color.blue);
-            Debug.DrawLine(startPosition + horizontalResult.movement, startPosition + totalMovement, Color.yellow);
+            Debug.DrawLine(
+                startPosition + horizontalResult.movement,
+                startPosition + totalMovement,
+                Color.yellow
+            );
         }
     }
 }

@@ -1,6 +1,4 @@
-
 using System.Collections;
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,8 +17,8 @@ public class Player : MonoBehaviour
         bar.setMaxValue(HP);
     }
 
-    public void TakeDamage(int damageAmount) {
-
+    public void TakeDamage(int damageAmount)
+    {
         int newVal = HP - damageAmount;
         HP = (newVal <= 0) ? 0 : newVal;
 
@@ -30,7 +28,7 @@ public class Player : MonoBehaviour
             PlayerDeath();
             isDead = true;
         }
-        else 
+        else
         {
             Debug.LogWarning("Player hit");
             StartCoroutine(DisplayBloodyScreen());
@@ -51,7 +49,7 @@ public class Player : MonoBehaviour
         GetComponent<ScreenFader>().StartFade();
 
         int waveSurvived = GlobalReferences.Instance.waveNumer;
-        if (waveSurvived - 1 > SessionManager.Instance.LoadHighScore()) 
+        if (waveSurvived - 1 > SessionManager.Instance.LoadHighScore())
         {
             SessionManager.Instance.SaveHighScore(waveSurvived - 1);
         }
@@ -96,7 +94,8 @@ public class Player : MonoBehaviour
             // Increment the elapsed time.
             elapsedTime += Time.deltaTime;
 
-            yield return null; ; // Wait for the next frame.
+            yield return null;
+            ; // Wait for the next frame.
         }
 
         if (bloodyScreen.activeInHierarchy)
